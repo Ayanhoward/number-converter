@@ -36,18 +36,6 @@ st.components.v1.html(
             sans: ['Inter', 'sans-serif'],
             mono: ['JetBrains Mono', 'monospace'],
           },
-          colors: {
-            cyber: {
-              dark: '#030712',
-              card: 'rgba(11, 15, 25, 0.75)',
-              border: 'rgba(56, 189, 248, 0.25)',
-              cyan: '#38bdf8',
-              magenta: '#f43f5e',
-              purple: '#a855f7',
-              neonGreen: '#10b981',
-              gold: '#f59e0b',
-            }
-          }
         }
       }
     }
@@ -68,17 +56,14 @@ st.components.v1.html(
 
     @keyframes glitch {
       0% { text-shadow: 2px 0 #f43f5e, -2px 0 #38bdf8; }
-      25% { text-shadow: -2px 0 #f43f5e, 2px 0 #38bdf8; }
       50% { text-shadow: 2px -1px #a855f7, -2px 1px #10b981; }
-      75% { text-shadow: -1px 2px #f43f5e, 1px -2px #38bdf8; }
       100% { text-shadow: 2px 0 #f43f5e, -2px 0 #38bdf8; }
     }
     .glitch-text { animation: glitch 3s infinite alternate ease-in-out; }
 
     @keyframes rgb-border-rotate {
       0% { border-color: rgba(56, 189, 248, 0.5); box-shadow: 0 0 15px rgba(56, 189, 248, 0.2); }
-      33% { border-color: rgba(168, 85, 247, 0.5); box-shadow: 0 0 18px rgba(168, 85, 247, 0.25); }
-      66% { border-color: rgba(244, 63, 94, 0.5); box-shadow: 0 0 18px rgba(244, 63, 94, 0.25); }
+      50% { border-color: rgba(168, 85, 247, 0.5); box-shadow: 0 0 18px rgba(168, 85, 247, 0.25); }
       100% { border-color: rgba(56, 189, 248, 0.5); box-shadow: 0 0 15px rgba(56, 189, 248, 0.2); }
     }
 
@@ -88,7 +73,7 @@ st.components.v1.html(
       -webkit-backdrop-filter: blur(16px);
       border: 1px solid rgba(56, 189, 248, 0.3);
       animation: rgb-border-rotate 8s infinite linear;
-      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
     .cyber-card:hover {
       transform: translateY(-2px);
@@ -143,13 +128,12 @@ st.components.v1.html(
       </div>
 
       <div class="flex flex-wrap items-center gap-2">
-        <button onclick="triggerSupernovaPulse()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-sky-500/20 to-purple-500/20 border border-sky-500/40 text-xs font-mono font-bold text-sky-300 hover:text-white hover:border-sky-400 transition-all flex items-center gap-2 shadow-lg group">
-          <i class="fa-solid fa-wand-magic-sparkles text-amber-400 group-hover:rotate-12 transition-transform"></i>
-          PULSE ANIMATION
+        <button onclick="updateConversion()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-sky-500 to-purple-600 border border-sky-400 text-xs font-mono font-bold text-white hover:opacity-90 transition-all flex items-center gap-2 shadow-lg">
+          <i class="fa-solid fa-play"></i> CONVERT VALUE
         </button>
         <div class="px-3 py-2 rounded-xl bg-slate-900/80 border border-slate-800 text-xs font-mono text-slate-400 flex items-center gap-2">
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-          ENGINE ACTIVE
+          READY (PRESS ENTER)
         </div>
       </div>
     </header>
@@ -171,7 +155,7 @@ st.components.v1.html(
           <div class="space-y-4">
             <div>
               <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Select Input Base</label>
-              <select id="input-base" class="w-full bg-slate-900/90 border border-slate-700/80 focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20 text-slate-100 rounded-xl px-4 py-3 text-sm font-semibold transition-all outline-none">
+              <select id="input-base" class="w-full bg-slate-900/90 border border-slate-700/80 focus:border-sky-400 text-slate-100 rounded-xl px-4 py-3 text-sm font-semibold outline-none">
                 <option value="Decimal">Decimal (Base 10)</option>
                 <option value="Binary">Binary (Base 2)</option>
                 <option value="Hexadecimal">Hexadecimal (Base 16)</option>
@@ -182,21 +166,21 @@ st.components.v1.html(
             <div>
               <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Word Size (Bit Width)</label>
               <div class="grid grid-cols-3 gap-2">
-                <button type="button" onclick="setBitWidth(8)" id="btn-bit-8" class="bit-width-btn active bg-sky-600 border border-sky-400 text-white font-mono font-bold text-xs py-2.5 rounded-xl shadow-lg shadow-sky-600/30 transition-all">8-Bit</button>
-                <button type="button" onclick="setBitWidth(16)" id="btn-bit-16" class="bit-width-btn bg-slate-900/80 border border-slate-800 text-slate-400 hover:text-slate-200 font-mono font-bold text-xs py-2.5 rounded-xl transition-all">16-Bit</button>
-                <button type="button" onclick="setBitWidth(32)" id="btn-bit-32" class="bit-width-btn bg-slate-900/80 border border-slate-800 text-slate-400 hover:text-slate-200 font-mono font-bold text-xs py-2.5 rounded-xl transition-all">32-Bit</button>
+                <button type="button" onclick="setBitWidth(8)" id="btn-bit-8" class="bit-width-btn active bg-sky-600 border border-sky-400 text-white font-mono font-bold text-xs py-2.5 rounded-xl shadow-lg transition-all">8-Bit</button>
+                <button type="button" onclick="setBitWidth(16)" id="btn-bit-16" class="bit-width-btn bg-slate-900/80 border border-slate-800 text-slate-400 font-mono font-bold text-xs py-2.5 rounded-xl transition-all">16-Bit</button>
+                <button type="button" onclick="setBitWidth(32)" id="btn-bit-32" class="bit-width-btn bg-slate-900/80 border border-slate-800 text-slate-400 font-mono font-bold text-xs py-2.5 rounded-xl transition-all">32-Bit</button>
               </div>
             </div>
 
             <div>
               <div class="flex justify-between items-center mb-2">
-                <label class="block text-xs font-bold uppercase tracking-wider text-slate-300">Enter Input Value</label>
-                <button onclick="clearInput()" class="text-[11px] text-slate-400 hover:text-sky-400 font-mono transition-colors">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-300">Enter Value & Press Enter ↵</label>
+                <button onclick="clearInput()" class="text-[11px] text-slate-400 hover:text-sky-400 font-mono">
                   <i class="fa-solid fa-rotate-left"></i> Reset
                 </button>
               </div>
               <div class="relative">
-                <input type="text" id="input-value" value="12" placeholder="Enter value..." class="cyber-input w-full bg-slate-900/90 border border-slate-700/80 focus:border-sky-400 text-slate-100 font-mono text-lg font-bold rounded-xl pl-4 pr-10 py-3 transition-all outline-none">
+                <input type="text" id="input-value" value="12" placeholder="Type & press Enter..." class="cyber-input w-full bg-slate-900/90 border border-slate-700/80 focus:border-sky-400 text-slate-100 font-mono text-lg font-bold rounded-xl pl-4 pr-10 py-3 outline-none">
               </div>
               <p id="error-message" class="text-xs text-rose-400 mt-2 font-medium hidden flex items-center gap-1.5">
                 <i class="fa-solid fa-triangle-exclamation"></i> Invalid input for selected number base!
@@ -206,10 +190,10 @@ st.components.v1.html(
             <div>
               <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">Quick Preset Benchmarks</label>
               <div class="flex flex-wrap gap-1.5">
-                <button onclick="applyPreset('MAX_UNSIGNED')" class="px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-[11px] font-mono text-slate-300 hover:text-sky-300 hover:border-sky-500/50 transition-all">Max Unsigned</button>
-                <button onclick="applyPreset('MIN_SIGNED')" class="px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-[11px] font-mono text-slate-300 hover:text-sky-300 hover:border-sky-500/50 transition-all">Min Signed</button>
-                <button onclick="applyPreset('ALL_ONES')" class="px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-[11px] font-mono text-slate-300 hover:text-sky-300 hover:border-sky-500/50 transition-all">All 1s</button>
-                <button onclick="applyPreset('ZERO')" class="px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-[11px] font-mono text-slate-300 hover:text-sky-300 hover:border-sky-500/50 transition-all">Zero</button>
+                <button onclick="applyPreset('MAX_UNSIGNED')" class="px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-[11px] font-mono text-slate-300 hover:text-sky-300 transition-all">Max Unsigned</button>
+                <button onclick="applyPreset('MIN_SIGNED')" class="px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-[11px] font-mono text-slate-300 hover:text-sky-300 transition-all">Min Signed</button>
+                <button onclick="applyPreset('ALL_ONES')" class="px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-[11px] font-mono text-slate-300 hover:text-sky-300 transition-all">All 1s</button>
+                <button onclick="applyPreset('ZERO')" class="px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-[11px] font-mono text-slate-300 hover:text-sky-300 transition-all">Zero</button>
               </div>
             </div>
           </div>
@@ -230,9 +214,9 @@ st.components.v1.html(
       <div class="lg:col-span-7 space-y-6">
         <div class="flex items-center justify-between">
           <h2 class="text-base font-bold text-slate-100 uppercase tracking-wider flex items-center gap-2">
-            <i class="fa-solid fa-bolt text-amber-400 animate-pulse"></i> Converted Base Outputs
+            <i class="fa-solid fa-bolt text-amber-400"></i> Converted Base Outputs
           </h2>
-          <span class="text-xs text-slate-400 font-mono">Live Hardware Alignment</span>
+          <span class="text-xs text-slate-400 font-mono">Press Enter ↵ to Apply</span>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -308,7 +292,6 @@ st.components.v1.html(
   <script>
     let currentBitWidth = 8;
     let currentBase = "Decimal";
-    let shockwavePulses = [];
 
     const inputBaseSelect = document.getElementById('input-base');
     const inputValueInput = document.getElementById('input-value');
@@ -322,8 +305,17 @@ st.components.v1.html(
     };
 
     function setupEventListeners() {
-      inputBaseSelect.addEventListener('change', (e) => { currentBase = e.target.value; updateConversion(); });
-      inputValueInput.addEventListener('input', () => { updateConversion(); });
+      // Changed from 'input' to 'keydown' -> triggers ONLY when Enter key is pressed!
+      inputValueInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          updateConversion();
+        }
+      });
+      
+      inputBaseSelect.addEventListener('change', () => {
+        currentBase = inputBaseSelect.value;
+        updateConversion();
+      });
     }
 
     function setupCanvasAnimation() {
@@ -337,7 +329,7 @@ st.components.v1.html(
         height = canvas.height = window.innerHeight;
       });
 
-      const stars = Array.from({ length: 80 }, () => ({
+      const stars = Array.from({ length: 70 }, () => ({
         x: Math.random() * width, y: Math.random() * height,
         radius: Math.random() * 1.5 + 0.3, alpha: Math.random() * 0.8 + 0.2,
         speed: Math.random() * 0.2 + 0.05, color: ['#38bdf8', '#a855f7', '#f43f5e'][Math.floor(Math.random() * 3)]
@@ -351,21 +343,9 @@ st.components.v1.html(
           ctx.beginPath(); ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
           ctx.fillStyle = star.color; ctx.globalAlpha = star.alpha; ctx.fill(); ctx.globalAlpha = 1.0;
         });
-
-        for (let i = shockwavePulses.length - 1; i >= 0; i--) {
-          const p = shockwavePulses[i];
-          p.radius += p.speed; p.alpha -= 0.02;
-          if (p.alpha <= 0) { shockwavePulses.splice(i, 1); continue; }
-          ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-          ctx.strokeStyle = p.color; ctx.lineWidth = p.lineWidth; ctx.globalAlpha = p.alpha; ctx.stroke(); ctx.globalAlpha = 1.0;
-        }
         requestAnimationFrame(renderFrame);
       }
       renderFrame();
-    }
-
-    function triggerSupernovaPulse() {
-      shockwavePulses.push({ x: window.innerWidth / 2, y: window.innerHeight / 3, radius: 10, speed: 6, alpha: 0.8, lineWidth: 2, color: '#38bdf8' });
     }
 
     function setBitWidth(bits) {
@@ -380,7 +360,6 @@ st.components.v1.html(
         activeBtn.classList.add('bg-sky-600', 'border-sky-400', 'text-white', 'shadow-lg');
       }
       document.getElementById('bit-mode-badge').textContent = `${bits}-BIT WORD`;
-      triggerSupernovaPulse();
       updateConversion();
     }
 
@@ -392,7 +371,7 @@ st.components.v1.html(
       else if (type === 'MIN_SIGNED') inputValueInput.value = -Math.pow(2, currentBitWidth - 1);
       else if (type === 'ALL_ONES') { inputBaseSelect.value = 'Binary'; currentBase = 'Binary'; inputValueInput.value = "1".repeat(currentBitWidth); }
       else if (type === 'ZERO') inputValueInput.value = '0';
-      updateConversion(); triggerSupernovaPulse();
+      updateConversion();
     }
 
     function updateConversion() {
@@ -465,7 +444,7 @@ st.components.v1.html(
           arr[idx] = arr[idx] === '1' ? '0' : '1';
           inputBaseSelect.value = 'Binary'; currentBase = 'Binary';
           inputValueInput.value = arr.join('');
-          updateConversion(); triggerSupernovaPulse();
+          updateConversion();
         };
         bitGrid.appendChild(bitBox);
       });
