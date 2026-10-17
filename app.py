@@ -7,7 +7,7 @@ st.set_page_config(
     layout="wide",
 )
 
-# Embed the complete Cyber Architecture HTML/JS Web App with "Proceed" Intro Splash Screen
+# Embed the complete Cyber Architecture HTML/JS Web App with Sequential Page Transitions
 st.components.v1.html(
     """
 <!DOCTYPE html>
@@ -48,10 +48,6 @@ st.components.v1.html(
     }
     .glitch-text { animation: glitch 3s infinite alternate ease-in-out; }
 
-    @keyframes grid-move {
-      0% { background-position: 0 0; }
-      100% { background-position: 40px 40px; }
-    }
     .cyber-grid-bg {
       background-image: linear-gradient(to right, rgba(56, 189, 248, 0.04) 1px, transparent 1px),
                         linear-gradient(to bottom, rgba(56, 189, 248, 0.04) 1px, transparent 1px);
@@ -98,80 +94,89 @@ st.components.v1.html(
     }
     .animate-pop { animation: value-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
     
-    #main-hud { transition: opacity 0.5s ease, transform 0.5s ease; }
+    .page-transition { transition: opacity 0.4s ease, transform 0.4s ease; }
   </style>
 </head>
 <body class="bg-[#030712] text-slate-100 font-sans min-h-screen relative overflow-x-hidden p-6 cyber-grid-bg">
 
   <canvas id="supernova-canvas"></canvas>
 
-  <div class="max-w-4xl mx-auto relative z-10 py-10" id="splash-screen">
-    <div class="cyber-card rounded-3xl p-8 sm:p-12 text-center space-y-8 shadow-2xl relative overflow-hidden">
+  <!-- STAGE 1: CONVERSION PARAMETERS INPUT SCREEN -->
+  <div class="max-w-xl mx-auto relative z-10 py-12 page-transition" id="input-screen">
+    <div class="cyber-card rounded-3xl p-8 sm:p-10 shadow-2xl space-y-6">
       
-      <!-- Icon Emblem -->
-      <div class="w-24 h-24 mx-auto rounded-3xl bg-gradient-to-tr from-sky-500 via-purple-500 to-pink-500 p-1 flex items-center justify-center shadow-2xl shadow-rose-500/30">
-        <div class="w-full h-full bg-slate-950 rounded-[22px] flex items-center justify-center">
-          <i class="fa-solid fa-microchip text-4xl text-sky-400 animate-pulse"></i>
-        </div>
-      </div>
-
-      <!-- Title & Subtitle -->
-      <div class="space-y-3">
-        <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-white glitch-text">
+      <div class="text-center space-y-2">
+        <span class="text-xs font-mono font-bold tracking-widest text-sky-400 uppercase bg-sky-950/80 px-3 py-1 rounded-full border border-sky-800/60">
+          ARCHITECTURE & ORGANIZATION
+        </span>
+        <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-white glitch-text mt-2">
           Number System Converter
         </h1>
-        <p class="text-xs sm:text-sm font-mono tracking-widest text-pink-400 uppercase bg-pink-950/80 px-4 py-1.5 rounded-full border border-pink-800/60 inline-block shadow-inner">
-          Neural Architecture & Data Representation Suite
-        </p>
+        <p class="text-xs text-slate-400">Configure parameters and press Enter to generate output HUD</p>
       </div>
 
-      <!-- System Overview Box -->
-      <div class="bg-slate-950/90 border border-slate-800 p-6 rounded-2xl text-left space-y-3 shadow-inner">
-        <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-sky-400 font-mono">
-          <i class="fa-solid fa-bolt text-amber-400"></i> System Overview:
+      <div class="space-y-4 pt-2">
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Select Input Base</label>
+          <select id="input-base" class="w-full bg-slate-900/95 border border-slate-700 focus:border-sky-400 text-slate-100 rounded-2xl px-4 py-3.5 text-sm font-semibold outline-none transition-all">
+            <option value="Decimal">Decimal (Base 10)</option>
+            <option value="Binary">Binary (Base 2)</option>
+            <option value="Hexadecimal">Hexadecimal (Base 16)</option>
+            <option value="Octal">Octal (Base 8)</option>
+          </select>
         </div>
-        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">
-          Welcome to the high-end Computer Architecture and Organization Number System Converter. Engineered specifically for precision hardware computing, this platform leverages real-time multi-base conversions across Decimal, Binary, Hexadecimal, and Octal formats, alongside advanced word-size bit manipulation and signed 2's complement representations.
-        </p>
-      </div>
 
-      <!-- Authorization Checkbox -->
-      <div class="flex items-center justify-center gap-3 pt-2">
-        <input type="checkbox" id="auth-checkbox" class="w-4 h-4 rounded border-slate-700 bg-slate-900 text-sky-500 focus:ring-0 cursor-pointer">
-        <label for="auth-checkbox" class="text-xs sm:text-sm font-mono text-slate-300 cursor-pointer select-none">
-          I authorize neural telemetry and agree to system hardware terms
-        </label>
-      </div>
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Word Size (Bit Width)</label>
+          <div class="grid grid-cols-3 gap-2">
+            <button type="button" onclick="setBitWidth(8)" id="btn-bit-8" class="bit-width-btn active bg-sky-600 border border-sky-400 text-white font-mono font-bold text-xs py-3 rounded-2xl shadow-lg transition-all">8-Bit</button>
+            <button type="button" onclick="setBitWidth(16)" id="btn-bit-16" class="bit-width-btn bg-slate-900/90 border border-slate-800 text-slate-400 font-mono font-bold text-xs py-3 rounded-2xl transition-all">16-Bit</button>
+            <button type="button" onclick="setBitWidth(32)" id="btn-bit-32" class="bit-width-btn bg-slate-900/90 border border-slate-800 text-slate-400 font-mono font-bold text-xs py-3 rounded-2xl transition-all">32-Bit</button>
+          </div>
+        </div>
 
-      <!-- Proceed Button -->
-      <div>
-        <button onclick="launchHUD()" class="w-full sm:w-auto px-10 py-4 rounded-2xl bg-gradient-to-r from-sky-500 via-purple-600 to-pink-600 border border-sky-400 text-sm font-mono font-bold text-white shadow-xl shadow-purple-600/30 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3 mx-auto">
-          <i class="fa-solid fa-arrow-right text-amber-300 animate-pulse"></i>
-          Proceed
-        </button>
+        <div>
+          <div class="flex justify-between items-center mb-2">
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300">Enter Value & Press Enter ↵</label>
+            <button onclick="clearInput()" class="text-[11px] text-slate-400 hover:text-sky-400 font-mono">
+              <i class="fa-solid fa-rotate-left"></i> Reset
+            </button>
+          </div>
+          <div class="relative">
+            <input type="text" id="input-value" value="12" placeholder="Type value & press Enter..." class="cyber-input w-full bg-slate-900/95 border border-slate-700 text-slate-100 font-mono text-lg font-bold rounded-2xl pl-4 pr-10 py-4 outline-none transition-all shadow-inner">
+          </div>
+          <p id="error-message" class="text-xs text-rose-400 mt-2 font-medium hidden flex items-center gap-1.5">
+            <i class="fa-solid fa-triangle-exclamation"></i> Invalid input for selected number base!
+          </p>
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">Quick Preset Benchmarks</label>
+          <div class="flex flex-wrap gap-1.5">
+            <button onclick="applyPreset('MAX_UNSIGNED')" class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-[11px] font-mono text-slate-300 hover:text-sky-300 transition-all">Max Unsigned</button>
+            <button onclick="applyPreset('MIN_SIGNED')" class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-[11px] font-mono text-slate-300 hover:text-sky-300 transition-all">Min Signed</button>
+            <button onclick="applyPreset('ALL_ONES')" class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-[11px] font-mono text-slate-300 hover:text-sky-300 transition-all">All 1s</button>
+            <button onclick="applyPreset('ZERO')" class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-[11px] font-mono text-slate-300 hover:text-sky-300 transition-all">Zero</button>
+          </div>
+        </div>
       </div>
 
     </div>
   </div>
 
-  <!-- MAIN CONVERTER HUD (Initially Hidden) -->
-  <div class="max-w-7xl mx-auto relative z-10 hidden opacity-0" id="main-hud">
+  <!-- STAGE 2: OUTPUT HUD DASHBOARD (Initially Hidden) -->
+  <div class="max-w-7xl mx-auto relative z-10 hidden opacity-0 page-transition" id="output-screen">
 
     <!-- Header Bar -->
     <header class="mb-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4 border border-slate-800 pb-5 backdrop-blur-xl bg-slate-950/60 p-5 rounded-3xl shadow-2xl">
       <div class="flex items-center gap-4">
-        <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-sky-400 via-purple-500 to-pink-500 p-0.5 flex items-center justify-center shadow-xl">
-          <div class="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">
-            <i class="fa-solid fa-atom text-2xl text-sky-400 animate-spin" style="animation-duration: 8s;"></i>
-          </div>
-        </div>
+        <button onclick="returnToInput()" class="px-4 py-2.5 rounded-2xl bg-slate-900 border border-slate-700 text-xs font-mono font-bold text-sky-300 hover:text-white hover:border-sky-400 transition-all flex items-center gap-2 shadow-lg">
+          <i class="fa-solid fa-arrow-left"></i> Change Parameters
+        </button>
         <div>
-          <span class="text-[11px] font-mono font-bold tracking-widest text-sky-400 uppercase bg-sky-950/90 px-2.5 py-1 rounded-md border border-sky-800/60">
-            ARCHITECTURE & ORGANIZATION
+          <span id="active-param-badge" class="text-[11px] font-mono font-bold tracking-widest text-purple-400 uppercase bg-purple-950/90 px-2.5 py-1 rounded-md border border-purple-800/60">
+            DECIMAL (12) • 8-BIT WORD
           </span>
-          <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-white mt-1 glitch-text">
-            NUMBER SYSTEM CONVERTER
-          </h1>
         </div>
       </div>
 
@@ -179,75 +184,14 @@ st.components.v1.html(
         <button onclick="triggerPulseWave()" class="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-sky-500/20 to-pink-500/20 border border-sky-400/50 text-xs font-mono font-bold text-sky-300 hover:text-white transition-all flex items-center gap-2">
           <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> TRIGGER PULSE
         </button>
-        <div class="px-3.5 py-2.5 rounded-2xl bg-slate-900/90 border border-slate-800 text-xs font-mono text-slate-300 flex items-center gap-2">
-          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-          READY (PRESS ENTER ↵)
-        </div>
       </div>
     </header>
 
     <!-- Content Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-      <!-- LEFT COLUMN -->
+      <!-- LEFT COLUMN: Bit Matrix -->
       <div class="lg:col-span-5 space-y-6">
-        <div class="cyber-card rounded-3xl p-6 shadow-2xl relative overflow-hidden">
-          <div class="flex items-center justify-between mb-5 border-b border-slate-800 pb-3">
-            <h2 class="text-sm font-bold text-sky-400 uppercase tracking-wider flex items-center gap-2">
-              <i class="fa-solid fa-sliders text-purple-400"></i> Conversion Parameters
-            </h2>
-            <span id="bit-mode-badge" class="text-xs font-mono text-purple-300 bg-purple-950/90 px-3 py-1 rounded-full border border-purple-800/80">
-              8-BIT WORD
-            </span>
-          </div>
-
-          <div class="space-y-4">
-            <div>
-              <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Select Input Base</label>
-              <select id="input-base" class="w-full bg-slate-900/95 border border-slate-700 focus:border-sky-400 text-slate-100 rounded-2xl px-4 py-3 text-sm font-semibold outline-none transition-all">
-                <option value="Decimal">Decimal (Base 10)</option>
-                <option value="Binary">Binary (Base 2)</option>
-                <option value="Hexadecimal">Hexadecimal (Base 16)</option>
-                <option value="Octal">Octal (Base 8)</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Word Size (Bit Width)</label>
-              <div class="grid grid-cols-3 gap-2">
-                <button type="button" onclick="setBitWidth(8)" id="btn-bit-8" class="bit-width-btn active bg-sky-600 border border-sky-400 text-white font-mono font-bold text-xs py-3 rounded-2xl shadow-lg transition-all">8-Bit</button>
-                <button type="button" onclick="setBitWidth(16)" id="btn-bit-16" class="bit-width-btn bg-slate-900/90 border border-slate-800 text-slate-400 font-mono font-bold text-xs py-3 rounded-2xl transition-all">16-Bit</button>
-                <button type="button" onclick="setBitWidth(32)" id="btn-bit-32" class="bit-width-btn bg-slate-900/90 border border-slate-800 text-slate-400 font-mono font-bold text-xs py-3 rounded-2xl transition-all">32-Bit</button>
-              </div>
-            </div>
-
-            <div>
-              <div class="flex justify-between items-center mb-2">
-                <label class="block text-xs font-bold uppercase tracking-wider text-slate-300">Enter Value & Press Enter ↵</label>
-                <button onclick="clearInput()" class="text-[11px] text-slate-400 hover:text-sky-400 font-mono">
-                  <i class="fa-solid fa-rotate-left"></i> Reset
-                </button>
-              </div>
-              <div class="relative">
-                <input type="text" id="input-value" value="12" placeholder="Type & press Enter..." class="cyber-input w-full bg-slate-900/95 border border-slate-700 text-slate-100 font-mono text-lg font-bold rounded-2xl pl-4 pr-10 py-3.5 outline-none transition-all">
-              </div>
-              <p id="error-message" class="text-xs text-rose-400 mt-2 font-medium hidden flex items-center gap-1.5">
-                <i class="fa-solid fa-triangle-exclamation"></i> Invalid input for selected number base!
-              </p>
-            </div>
-
-            <div>
-              <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">Quick Preset Benchmarks</label>
-              <div class="flex flex-wrap gap-1.5">
-                <button onclick="applyPreset('MAX_UNSIGNED')" class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-[11px] font-mono text-slate-300 hover:text-sky-300 transition-all">Max Unsigned</button>
-                <button onclick="applyPreset('MIN_SIGNED')" class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-[11px] font-mono text-slate-300 hover:text-sky-300 transition-all">Min Signed</button>
-                <button onclick="applyPreset('ALL_ONES')" class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-[11px] font-mono text-slate-300 hover:text-sky-300 transition-all">All 1s</button>
-                <button onclick="applyPreset('ZERO')" class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-[11px] font-mono text-slate-300 hover:text-sky-300 transition-all">Zero</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
         <div class="cyber-card rounded-3xl p-6 shadow-2xl">
           <div class="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
             <h3 class="text-xs font-bold uppercase tracking-wider text-purple-400 flex items-center gap-2">
@@ -259,13 +203,13 @@ st.components.v1.html(
         </div>
       </div>
 
-      <!-- RIGHT COLUMN -->
+      <!-- RIGHT COLUMN: Converted Base Outputs -->
       <div class="lg:col-span-7 space-y-6">
         <div class="flex items-center justify-between">
           <h2 class="text-base font-bold text-slate-100 uppercase tracking-wider flex items-center gap-2">
             <i class="fa-solid fa-bolt text-amber-400 animate-pulse"></i> Converted Base Outputs
           </h2>
-          <span class="text-xs text-slate-400 font-mono bg-slate-900 px-3 py-1 rounded-lg border border-slate-800">Press Enter ↵ to Apply</span>
+          <span class="text-xs text-slate-400 font-mono bg-slate-900 px-3 py-1 rounded-lg border border-slate-800">Hardware Verified</span>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -333,11 +277,12 @@ st.components.v1.html(
 
     </div>
 
-    <div id="toast" class="fixed bottom-6 right-6 bg-slate-900/95 text-sky-300 border border-sky-500/60 backdrop-blur-xl font-mono font-bold text-xs px-5 py-3.5 rounded-2xl shadow-2xl opacity-0 pointer-events-none transition-all duration-300 flex items-center gap-3 z-50">
-      <div class="w-2.5 h-2.5 rounded-full bg-sky-400 animate-ping"></div>
-      <span id="toast-text">Copied!</span>
-    </div>
+  </div>
 
+  <!-- Toast Alert -->
+  <div id="toast" class="fixed bottom-6 right-6 bg-slate-900/95 text-sky-300 border border-sky-500/60 backdrop-blur-xl font-mono font-bold text-xs px-5 py-3.5 rounded-2xl shadow-2xl opacity-0 pointer-events-none transition-all duration-300 flex items-center gap-3 z-50 transform translate-y-4">
+    <div class="w-2.5 h-2.5 rounded-full bg-sky-400 animate-ping"></div>
+    <span id="toast-text">Copied!</span>
   </div>
 
   <script>
@@ -352,45 +297,82 @@ st.components.v1.html(
 
     window.onload = function() {
       setupCanvasAnimation();
+      setupEventListeners();
     };
-
-    function launchHUD() {
-      const checkbox = document.getElementById('auth-checkbox');
-      if (!checkbox.checked) {
-        alert("Please authorize neural telemetry and agree to system terms to proceed.");
-        return;
-      }
-
-      const splash = document.getElementById('splash-screen');
-      const hud = document.getElementById('main-hud');
-
-      splash.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
-      splash.style.opacity = '0';
-      splash.style.transform = 'scale(0.95)';
-
-      setTimeout(() => {
-        splash.style.display = 'none';
-        hud.classList.remove('hidden');
-        setTimeout(() => {
-          hud.classList.remove('opacity-0');
-          setupEventListeners();
-          updateConversion();
-        }, 50);
-      }, 400);
-    }
 
     function setupEventListeners() {
       inputValueInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
-          updateConversion();
-          triggerPulseWave();
+          processAndTransitionToHUD();
         }
       });
-      
-      inputBaseSelect.addEventListener('change', () => {
-        currentBase = inputBaseSelect.value;
-        updateConversion();
-      });
+    }
+
+    function processAndTransitionToHUD() {
+      const raw = inputValueInput.value.trim();
+      errorMessage.classList.add('hidden');
+      if (raw === "") {
+        errorMessage.classList.remove('hidden');
+        return;
+      }
+
+      let decimalVal = 0, isValid = true;
+      currentBase = inputBaseSelect.value;
+
+      try {
+        if (currentBase === 'Decimal') decimalVal = parseInt(raw, 10);
+        else if (currentBase === 'Binary') decimalVal = parseInt(raw, 2);
+        else if (currentBase === 'Hexadecimal') decimalVal = parseInt(raw.replace(/^0x/i, ''), 16);
+        else if (currentBase === 'Octal') decimalVal = parseInt(raw.replace(/^0o/i, ''), 8);
+      } catch (err) { isValid = false; }
+
+      if (!isValid || isNaN(decimalVal)) {
+        errorMessage.classList.remove('hidden');
+        return;
+      }
+
+      // Render Outputs
+      renderOutputs(decimalVal);
+
+      // Update Header Badge
+      document.getElementById('active-param-badge').textContent = `${currentBase.toUpperCase()} (${raw}) • ${currentBitWidth}-BIT WORD`;
+
+      // Transition to Output HUD Screen
+      const inputScreen = document.getElementById('input-screen');
+      const outputScreen = document.getElementById('output-screen');
+
+      inputScreen.style.opacity = '0';
+      inputScreen.style.transform = 'scale(0.95)';
+
+      setTimeout(() => {
+        inputScreen.style.display = 'none';
+        outputScreen.classList.remove('hidden');
+        setTimeout(() => {
+          outputScreen.classList.remove('opacity-0');
+          triggerPulseWave();
+        }, 50);
+      }, 400);
+    }
+
+    function returnToInput() {
+      const inputScreen = document.getElementById('input-screen');
+      const outputScreen = document.getElementById('output-screen');
+
+      outputScreen.style.opacity = '0';
+      outputScreen.style.transform = 'scale(0.95)';
+
+      setTimeout(() => {
+        outputScreen.classList.add('hidden');
+        outputScreen.style.opacity = '1';
+        outputScreen.style.transform = 'scale(1)';
+
+        inputScreen.style.display = 'block';
+        setTimeout(() => {
+          inputScreen.style.opacity = '1';
+          inputScreen.style.transform = 'scale(1)';
+          inputValueInput.focus();
+        }, 50);
+      }, 400);
     }
 
     function setupCanvasAnimation() {
@@ -452,12 +434,9 @@ st.components.v1.html(
         activeBtn.classList.remove('bg-slate-900/90', 'border-slate-800', 'text-slate-400');
         activeBtn.classList.add('bg-sky-600', 'border-sky-400', 'text-white', 'shadow-lg');
       }
-      document.getElementById('bit-mode-badge').textContent = `${bits}-BIT WORD`;
-      updateConversion();
-      triggerPulseWave();
     }
 
-    function clearInput() { inputValueInput.value = ''; updateConversion(); }
+    function clearInput() { inputValueInput.value = ''; }
 
     function applyPreset(type) {
       inputBaseSelect.value = 'Decimal'; currentBase = 'Decimal';
@@ -465,25 +444,6 @@ st.components.v1.html(
       else if (type === 'MIN_SIGNED') inputValueInput.value = -Math.pow(2, currentBitWidth - 1);
       else if (type === 'ALL_ONES') { inputBaseSelect.value = 'Binary'; currentBase = 'Binary'; inputValueInput.value = "1".repeat(currentBitWidth); }
       else if (type === 'ZERO') inputValueInput.value = '0';
-      updateConversion();
-      triggerPulseWave();
-    }
-
-    function updateConversion() {
-      const raw = inputValueInput.value.trim();
-      errorMessage.classList.add('hidden');
-      if (raw === "") { renderZeros(); return; }
-
-      let decimalVal = 0, isValid = true;
-      try {
-        if (currentBase === 'Decimal') decimalVal = parseInt(raw, 10);
-        else if (currentBase === 'Binary') decimalVal = parseInt(raw, 2);
-        else if (currentBase === 'Hexadecimal') decimalVal = parseInt(raw.replace(/^0x/i, ''), 16);
-        else if (currentBase === 'Octal') decimalVal = parseInt(raw.replace(/^0o/i, ''), 8);
-      } catch (err) { isValid = false; }
-
-      if (!isValid || isNaN(decimalVal)) { errorMessage.classList.remove('hidden'); renderZeros(); return; }
-      renderOutputs(decimalVal);
     }
 
     function renderOutputs(decVal) {
@@ -507,17 +467,6 @@ st.components.v1.html(
       renderBitGrid(binStr);
     }
 
-    function renderZeros() {
-      const zeros = "0".repeat(currentBitWidth);
-      updateElementText('out-decimal', "0");
-      updateElementText('out-hex', "0x00");
-      updateElementText('out-binary', zeros);
-      updateElementText('out-octal', "0o0");
-      updateElementText('out-twos-comp', zeros);
-      updateElementText('out-sign-mag', zeros);
-      renderBitGrid(zeros);
-    }
-
     function updateElementText(id, text) {
       const el = document.getElementById(id);
       if (el && el.textContent !== text) {
@@ -537,9 +486,9 @@ st.components.v1.html(
         bitBox.onclick = () => {
           let arr = binStr.split('');
           arr[idx] = arr[idx] === '1' ? '0' : '1';
-          inputBaseSelect.value = 'Binary'; currentBase = 'Binary';
-          inputValueInput.value = arr.join('');
-          updateConversion();
+          const newBin = arr.join('');
+          const newDec = parseInt(newBin, 2);
+          renderOutputs(newDec);
           triggerPulseWave();
         };
         bitGrid.appendChild(bitBox);
@@ -566,6 +515,6 @@ st.components.v1.html(
 </body>
 </html>
 """,
-    height=920,
+    height=900,
     scrolling=True,
 )
