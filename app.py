@@ -7,7 +7,7 @@ st.set_page_config(
     layout="wide",
 )
 
-# Embed the complete Cyber Architecture HTML/JS Web App
+# Embed the complete Cyber Architecture HTML/JS Web App with Enhanced Animations
 st.components.v1.html(
     """
 <!DOCTYPE html>
@@ -28,25 +28,13 @@ st.components.v1.html(
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-            mono: ['JetBrains Mono', 'monospace'],
-          },
-        }
-      }
-    }
-  </script>
-
   <style>
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #030712; }
     ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #38bdf8; }
 
+    /* Canvas Animation Layer */
     #supernova-canvas {
       position: fixed;
       top: 0; left: 0;
@@ -54,108 +42,129 @@ st.components.v1.html(
       z-index: 0; pointer-events: none;
     }
 
+    /* Cyber Glitch Title Animation */
     @keyframes glitch {
       0% { text-shadow: 2px 0 #f43f5e, -2px 0 #38bdf8; }
-      50% { text-shadow: 2px -1px #a855f7, -2px 1px #10b981; }
+      25% { text-shadow: -2px 0 #a855f7, 2px 0 #38bdf8; }
+      50% { text-shadow: 2px -1px #10b981, -2px 1px #f43f5e; }
+      75% { text-shadow: -1px 2px #38bdf8, 1px -2px #a855f7; }
       100% { text-shadow: 2px 0 #f43f5e, -2px 0 #38bdf8; }
     }
     .glitch-text { animation: glitch 3s infinite alternate ease-in-out; }
 
-    @keyframes rgb-border-rotate {
-      0% { border-color: rgba(56, 189, 248, 0.5); box-shadow: 0 0 15px rgba(56, 189, 248, 0.2); }
-      50% { border-color: rgba(168, 85, 247, 0.5); box-shadow: 0 0 18px rgba(168, 85, 247, 0.25); }
-      100% { border-color: rgba(56, 189, 248, 0.5); box-shadow: 0 0 15px rgba(56, 189, 248, 0.2); }
+    /* Moving Cyber Grid Background Effect */
+    @keyframes grid-move {
+      0% { background-position: 0 0; }
+      100% { background-position: 50px 50px; }
+    }
+    .cyber-grid-bg {
+      background-image: linear-gradient(to right, rgba(56, 189, 248, 0.05) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(56, 189, 248, 0.05) 1px, transparent 1px);
+      background-size: 30px 30px;
+    }
+
+    /* Enhanced RGB Rotating Border Animation */
+    @keyframes rgb-border {
+      0% { border-color: rgba(56, 189, 248, 0.6); box-shadow: 0 0 20px rgba(56, 189, 248, 0.25), inset 0 0 10px rgba(56, 189, 248, 0.1); }
+      33% { border-color: rgba(168, 85, 247, 0.6); box-shadow: 0 0 25px rgba(168, 85, 247, 0.3), inset 0 0 12px rgba(168, 85, 247, 0.15); }
+      66% { border-color: rgba(244, 63, 94, 0.6); box-shadow: 0 0 25px rgba(244, 63, 94, 0.3), inset 0 0 12px rgba(244, 63, 94, 0.15); }
+      100% { border-color: rgba(56, 189, 248, 0.6); box-shadow: 0 0 20px rgba(56, 189, 248, 0.25), inset 0 0 10px rgba(56, 189, 248, 0.1); }
     }
 
     .cyber-card {
-      background: rgba(11, 15, 25, 0.78);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(56, 189, 248, 0.3);
-      animation: rgb-border-rotate 8s infinite linear;
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      background: rgba(11, 15, 25, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 2px solid rgba(56, 189, 248, 0.4);
+      animation: rgb-border 6s infinite linear;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
     }
     .cyber-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 25px rgba(56, 189, 248, 0.4) !important;
+      transform: translateY(-4px) scale(1.01);
+      box-shadow: 0 0 35px rgba(56, 189, 248, 0.6) !important;
     }
 
+    /* Interactive Bit Box Styles */
     .bit-box {
-      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
       cursor: pointer; user-select: none;
     }
     .bit-box.active {
-      background: linear-gradient(135deg, #0284c7, #0d9488);
+      background: linear-gradient(135deg, #0284c7, #9333ea);
       color: #ffffff; border-color: #38bdf8;
-      box-shadow: 0 0 12px rgba(56, 189, 248, 0.7), inset 0 0 6px rgba(255, 255, 255, 0.4);
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.8), inset 0 0 8px rgba(255, 255, 255, 0.5);
     }
     .bit-box.inactive {
-      background: rgba(15, 23, 42, 0.8);
+      background: rgba(15, 23, 42, 0.9);
       color: #64748b; border-color: #1e293b;
     }
-    .bit-box:hover { transform: scale(1.12); border-color: #a855f7; }
+    .bit-box:hover { transform: scale(1.18); border-color: #f43f5e; box-shadow: 0 0 15px rgba(244, 63, 94, 0.6); }
 
+    /* Value Change Pop Animation */
     @keyframes value-pop {
-      0% { transform: scale(0.96); opacity: 0.7; }
-      50% { transform: scale(1.03); color: #38bdf8; }
+      0% { transform: scale(0.92); opacity: 0.5; filter: blur(2px); }
+      50% { transform: scale(1.06); color: #38bdf8; filter: blur(0px); }
       100% { transform: scale(1); opacity: 1; }
     }
-    .animate-pop { animation: value-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-    .cyber-input:focus { box-shadow: 0 0 15px rgba(56, 189, 248, 0.4); }
+    .animate-pop { animation: value-pop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .cyber-input:focus { box-shadow: 0 0 20px rgba(56, 189, 248, 0.5); border-color: #38bdf8; }
   </style>
 </head>
-<body class="bg-[#030712] text-slate-100 font-sans min-h-screen relative overflow-x-hidden p-4">
+<body class="bg-[#030712] text-slate-100 font-sans min-h-screen relative overflow-x-hidden p-4 cyber-grid-bg">
 
   <canvas id="supernova-canvas"></canvas>
 
   <div class="max-w-7xl mx-auto relative z-10">
 
-    <header class="mb-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-800/80 pb-5 backdrop-blur-md bg-slate-950/40 p-4 rounded-2xl border">
+    <!-- Header Bar -->
+    <header class="mb-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4 border border-slate-800 pb-5 backdrop-blur-xl bg-slate-950/60 p-5 rounded-3xl shadow-2xl">
       <div class="flex items-center gap-4">
-        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-sky-500 via-purple-500 to-pink-500 p-0.5 flex items-center justify-center shadow-lg shadow-sky-500/20">
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-sky-400 via-purple-500 to-pink-500 p-0.5 flex items-center justify-center shadow-xl shadow-sky-500/30">
           <div class="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">
-            <i class="fa-solid fa-atom text-2xl text-sky-400 animate-spin" style="animation-duration: 10s;"></i>
+            <i class="fa-solid fa-atom text-2xl text-sky-400 animate-spin" style="animation-duration: 8s;"></i>
           </div>
         </div>
         <div>
-          <span class="text-xs font-mono font-bold tracking-widest text-sky-400 uppercase bg-sky-950/80 px-2 py-0.5 rounded border border-sky-800/50">
+          <span class="text-[11px] font-mono font-bold tracking-widest text-sky-400 uppercase bg-sky-950/90 px-2.5 py-1 rounded-md border border-sky-800/60 shadow-inner">
             ARCHITECTURE & ORGANIZATION
           </span>
-          <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-white mt-0.5 glitch-text">
+          <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-white mt-1 glitch-text">
             NUMBER SYSTEM CONVERTER
           </h1>
         </div>
       </div>
 
-      <div class="flex flex-wrap items-center gap-2">
-        <button onclick="updateConversion()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-sky-500 to-purple-600 border border-sky-400 text-xs font-mono font-bold text-white hover:opacity-90 transition-all flex items-center gap-2 shadow-lg">
-          <i class="fa-solid fa-play"></i> CONVERT VALUE
+      <div class="flex flex-wrap items-center gap-3">
+        <button onclick="triggerPulseWave()" class="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-sky-500/20 via-purple-500/20 to-pink-500/20 border border-sky-400/50 text-xs font-mono font-bold text-sky-300 hover:text-white hover:border-sky-400 transition-all flex items-center gap-2 shadow-lg group">
+          <i class="fa-solid fa-wand-magic-sparkles text-amber-400 group-hover:rotate-45 transition-transform duration-300"></i>
+          TRIGGER PULSE
         </button>
-        <div class="px-3 py-2 rounded-xl bg-slate-900/80 border border-slate-800 text-xs font-mono text-slate-400 flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-          READY (PRESS ENTER)
+        <div class="px-3.5 py-2.5 rounded-2xl bg-slate-900/90 border border-slate-800 text-xs font-mono text-slate-300 flex items-center gap-2 shadow-inner">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+          READY (PRESS ENTER ↵)
         </div>
       </div>
     </header>
 
+    <!-- Main Content Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
       <!-- LEFT COLUMN -->
       <div class="lg:col-span-5 space-y-6">
-        <div class="cyber-card rounded-2xl p-6 shadow-2xl relative overflow-hidden">
+        <div class="cyber-card rounded-3xl p-6 shadow-2xl relative overflow-hidden">
           <div class="flex items-center justify-between mb-5 border-b border-slate-800 pb-3">
-            <h2 class="text-base font-bold text-sky-400 uppercase tracking-wider flex items-center gap-2">
+            <h2 class="text-sm font-bold text-sky-400 uppercase tracking-wider flex items-center gap-2">
               <i class="fa-solid fa-sliders text-purple-400"></i> Conversion Parameters
             </h2>
-            <span id="bit-mode-badge" class="text-xs font-mono text-purple-300 bg-purple-950/80 px-2.5 py-1 rounded-full border border-purple-800/60">
+            <span id="bit-mode-badge" class="text-xs font-mono text-purple-300 bg-purple-950/90 px-3 py-1 rounded-full border border-purple-800/80 shadow-md">
               8-BIT WORD
             </span>
           </div>
 
-          <div class="space-y-4">
+          <div class="space-y-4 font-sans">
             <div>
               <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Select Input Base</label>
-              <select id="input-base" class="w-full bg-slate-900/90 border border-slate-700/80 focus:border-sky-400 text-slate-100 rounded-xl px-4 py-3 text-sm font-semibold outline-none">
+              <select id="input-base" class="w-full bg-slate-900/95 border border-slate-700 focus:border-sky-400 text-slate-100 rounded-2xl px-4 py-3 text-sm font-semibold outline-none transition-all shadow-inner">
                 <option value="Decimal">Decimal (Base 10)</option>
                 <option value="Binary">Binary (Base 2)</option>
                 <option value="Hexadecimal">Hexadecimal (Base 16)</option>
@@ -166,23 +175,23 @@ st.components.v1.html(
             <div>
               <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Word Size (Bit Width)</label>
               <div class="grid grid-cols-3 gap-2">
-                <button type="button" onclick="setBitWidth(8)" id="btn-bit-8" class="bit-width-btn active bg-sky-600 border border-sky-400 text-white font-mono font-bold text-xs py-2.5 rounded-xl shadow-lg transition-all">8-Bit</button>
-                <button type="button" onclick="setBitWidth(16)" id="btn-bit-16" class="bit-width-btn bg-slate-900/80 border border-slate-800 text-slate-400 font-mono font-bold text-xs py-2.5 rounded-xl transition-all">16-Bit</button>
-                <button type="button" onclick="setBitWidth(32)" id="btn-bit-32" class="bit-width-btn bg-slate-900/80 border border-slate-800 text-slate-400 font-mono font-bold text-xs py-2.5 rounded-xl transition-all">32-Bit</button>
+                <button type="button" onclick="setBitWidth(8)" id="btn-bit-8" class="bit-width-btn active bg-sky-600 border border-sky-400 text-white font-mono font-bold text-xs py-3 rounded-2xl shadow-lg shadow-sky-600/40 transition-all">8-Bit</button>
+                <button type="button" onclick="setBitWidth(16)" id="btn-bit-16" class="bit-width-btn bg-slate-900/90 border border-slate-800 text-slate-400 font-mono font-bold text-xs py-3 rounded-2xl transition-all hover:text-white">16-Bit</button>
+                <button type="button" onclick="setBitWidth(32)" id="btn-bit-32" class="bit-width-btn bg-slate-900/90 border border-slate-800 text-slate-400 font-mono font-bold text-xs py-3 rounded-2xl transition-all hover:text-white">32-Bit</button>
               </div>
             </div>
 
             <div>
               <div class="flex justify-between items-center mb-2">
                 <label class="block text-xs font-bold uppercase tracking-wider text-slate-300">Enter Value & Press Enter ↵</label>
-                <button onclick="clearInput()" class="text-[11px] text-slate-400 hover:text-sky-400 font-mono">
+                <button onclick="clearInput()" class="text-[11px] text-slate-400 hover:text-sky-400 font-mono transition-colors">
                   <i class="fa-solid fa-rotate-left"></i> Reset
                 </button>
               </div>
               <div class="relative">
-                <input type="text" id="input-value" value="12" placeholder="Type & press Enter..." class="cyber-input w-full bg-slate-900/90 border border-slate-700/80 focus:border-sky-400 text-slate-100 font-mono text-lg font-bold rounded-xl pl-4 pr-10 py-3 outline-none">
+                <input type="text" id="input-value" value="12" placeholder="Type & press Enter..." class="cyber-input w-full bg-slate-900/95 border border-slate-700 text-slate-100 font-mono text-lg font-bold rounded-2xl pl-4 pr-10 py-3.5 outline-none transition-all shadow-inner">
               </div>
-              <p id="error-message" class="text-xs text-rose-400 mt-2 font-medium hidden flex items-center gap-1.5">
+              <p id="error-message" class="text-xs text-rose-400 mt-2 font-medium hidden flex items-center gap-1.5 animate-bounce">
                 <i class="fa-solid fa-triangle-exclamation"></i> Invalid input for selected number base!
               </p>
             </div>
@@ -190,23 +199,24 @@ st.components.v1.html(
             <div>
               <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">Quick Preset Benchmarks</label>
               <div class="flex flex-wrap gap-1.5">
-                <button onclick="applyPreset('MAX_UNSIGNED')" class="px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-[11px] font-mono text-slate-300 hover:text-sky-300 transition-all">Max Unsigned</button>
-                <button onclick="applyPreset('MIN_SIGNED')" class="px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-[11px] font-mono text-slate-300 hover:text-sky-300 transition-all">Min Signed</button>
-                <button onclick="applyPreset('ALL_ONES')" class="px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-[11px] font-mono text-slate-300 hover:text-sky-300 transition-all">All 1s</button>
-                <button onclick="applyPreset('ZERO')" class="px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-[11px] font-mono text-slate-300 hover:text-sky-300 transition-all">Zero</button>
+                <button onclick="applyPreset('MAX_UNSIGNED')" class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-[11px] font-mono text-slate-300 hover:text-sky-300 hover:border-sky-500 transition-all">Max Unsigned</button>
+                <button onclick="applyPreset('MIN_SIGNED')" class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-[11px] font-mono text-slate-300 hover:text-sky-300 hover:border-sky-500 transition-all">Min Signed</button>
+                <button onclick="applyPreset('ALL_ONES')" class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-[11px] font-mono text-slate-300 hover:text-sky-300 hover:border-sky-500 transition-all">All 1s</button>
+                <button onclick="applyPreset('ZERO')" class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-[11px] font-mono text-slate-300 hover:text-sky-300 hover:border-sky-500 transition-all">Zero</button>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="cyber-card rounded-2xl p-6 shadow-2xl">
+        <!-- Interactive Bit Matrix -->
+        <div class="cyber-card rounded-3xl p-6 shadow-2xl">
           <div class="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
             <h3 class="text-xs font-bold uppercase tracking-wider text-purple-400 flex items-center gap-2">
               <i class="fa-solid fa-microchip text-purple-400"></i> Interactive Bit Flip Matrix
             </h3>
-            <span class="text-[10px] text-slate-400 font-mono bg-slate-900 px-2 py-0.5 rounded border border-slate-800">Click bit to toggle</span>
+            <span class="text-[10px] text-slate-400 font-mono bg-slate-900 px-2.5 py-1 rounded-md border border-slate-800">Click bit to toggle</span>
           </div>
-          <div id="bit-grid" class="flex flex-wrap gap-2 justify-center max-h-56 overflow-y-auto p-1"></div>
+          <div id="bit-grid" class="flex flex-wrap gap-2 justify-center max-h-56 overflow-y-auto p-2"></div>
         </div>
       </div>
 
@@ -214,66 +224,70 @@ st.components.v1.html(
       <div class="lg:col-span-7 space-y-6">
         <div class="flex items-center justify-between">
           <h2 class="text-base font-bold text-slate-100 uppercase tracking-wider flex items-center gap-2">
-            <i class="fa-solid fa-bolt text-amber-400"></i> Converted Base Outputs
+            <i class="fa-solid fa-bolt text-amber-400 animate-pulse"></i> Converted Base Outputs
           </h2>
-          <span class="text-xs text-slate-400 font-mono">Press Enter ↵ to Apply</span>
+          <span class="text-xs text-slate-400 font-mono bg-slate-900 px-3 py-1 rounded-lg border border-slate-800">Press Enter ↵ to Apply</span>
         </div>
 
+        <!-- Base Cards Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div class="cyber-card rounded-2xl p-5 relative group">
+          <div class="cyber-card rounded-3xl p-5 relative group">
             <div class="flex justify-between items-start mb-2">
               <span class="text-xs font-bold uppercase tracking-wider text-sky-400">Decimal (Base 10)</span>
-              <button onclick="copyToClipboard('out-decimal', 'Decimal')" class="text-slate-500 hover:text-sky-400 text-xs"><i class="fa-regular fa-copy"></i></button>
+              <button onclick="copyToClipboard('out-decimal', 'Decimal')" class="text-slate-500 hover:text-sky-400 text-xs p-1"><i class="fa-regular fa-copy"></i></button>
             </div>
             <div id="out-decimal" class="text-2xl font-mono font-extrabold text-white animate-pop">0</div>
           </div>
 
-          <div class="cyber-card rounded-2xl p-5 relative group">
+          <div class="cyber-card rounded-3xl p-5 relative group">
             <div class="flex justify-between items-start mb-2">
               <span class="text-xs font-bold uppercase tracking-wider text-purple-400">Hexadecimal (Base 16)</span>
-              <button onclick="copyToClipboard('out-hex', 'Hexadecimal')" class="text-slate-500 hover:text-purple-400 text-xs"><i class="fa-regular fa-copy"></i></button>
+              <button onclick="copyToClipboard('out-hex', 'Hexadecimal')" class="text-slate-500 hover:text-purple-400 text-xs p-1"><i class="fa-regular fa-copy"></i></button>
             </div>
             <div id="out-hex" class="text-2xl font-mono font-extrabold text-white animate-pop">0x00</div>
           </div>
 
-          <div class="cyber-card rounded-2xl p-5 relative group">
+          <div class="cyber-card rounded-3xl p-5 relative group">
             <div class="flex justify-between items-start mb-2">
               <span class="text-xs font-bold uppercase tracking-wider text-pink-400">Binary (Base 2)</span>
-              <button onclick="copyToClipboard('out-binary', 'Binary')" class="text-slate-500 hover:text-pink-400 text-xs"><i class="fa-regular fa-copy"></i></button>
+              <button onclick="copyToClipboard('out-binary', 'Binary')" class="text-slate-500 hover:text-pink-400 text-xs p-1"><i class="fa-regular fa-copy"></i></button>
             </div>
             <div id="out-binary" class="text-xl font-mono font-extrabold text-white animate-pop">00000000</div>
           </div>
 
-          <div class="cyber-card rounded-2xl p-5 relative group">
+          <div class="cyber-card rounded-3xl p-5 relative group">
             <div class="flex justify-between items-start mb-2">
               <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Octal (Base 8)</span>
-              <button onclick="copyToClipboard('out-octal', 'Octal')" class="text-slate-500 hover:text-emerald-400 text-xs"><i class="fa-regular fa-copy"></i></button>
+              <button onclick="copyToClipboard('out-octal', 'Octal')" class="text-slate-500 hover:text-emerald-400 text-xs p-1"><i class="fa-regular fa-copy"></i></button>
             </div>
             <div id="out-octal" class="text-2xl font-mono font-extrabold text-white animate-pop">0o000</div>
           </div>
         </div>
 
-        <div class="cyber-card rounded-2xl p-6 shadow-2xl space-y-4">
+        <!-- Signed Formats Card -->
+        <div class="cyber-card rounded-3xl p-6 shadow-2xl space-y-4">
           <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-            <h3 class="text-sm font-bold uppercase tracking-wider text-amber-400">Architecture Signed Formats</h3>
+            <h3 class="text-sm font-bold uppercase tracking-wider text-amber-400 flex items-center gap-2">
+              <i class="fa-solid fa-layer-group"></i> Architecture Signed Formats
+            </h3>
             <span id="range-badge" class="text-[11px] font-mono text-slate-300 bg-slate-900 px-3 py-1 rounded-lg border border-slate-800">Range: -128 to +127</span>
           </div>
 
           <div class="space-y-3 font-mono text-sm">
-            <div class="bg-slate-950/80 p-4 rounded-xl border border-slate-800 flex justify-between items-center">
+            <div class="bg-slate-950/90 p-4 rounded-2xl border border-slate-800 flex justify-between items-center shadow-inner">
               <div>
                 <div class="text-xs text-sky-400 font-bold uppercase">Signed 2's Complement</div>
-                <div id="out-twos-comp" class="text-base font-extrabold text-white mt-1">00000000</div>
+                <div id="out-twos-comp" class="text-base font-extrabold text-white mt-1 animate-pop">00000000</div>
               </div>
-              <button onclick="copyToClipboard('out-twos-comp', '2\'s Complement')" class="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-400 hover:text-sky-300">Copy</button>
+              <button onclick="copyToClipboard('out-twos-comp', '2\'s Complement')" class="px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-400 hover:text-sky-300 transition-all">Copy</button>
             </div>
 
-            <div class="bg-slate-950/80 p-4 rounded-xl border border-slate-800 flex justify-between items-center">
+            <div class="bg-slate-950/90 p-4 rounded-2xl border border-slate-800 flex justify-between items-center shadow-inner">
               <div>
                 <div class="text-xs text-purple-400 font-bold uppercase">Sign-Magnitude</div>
-                <div id="out-sign-mag" class="text-base font-extrabold text-white mt-1">00000000</div>
+                <div id="out-sign-mag" class="text-base font-extrabold text-white mt-1 animate-pop">00000000</div>
               </div>
-              <button onclick="copyToClipboard('out-sign-mag', 'Sign-Magnitude')" class="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-400 hover:text-purple-300">Copy</button>
+              <button onclick="copyToClipboard('out-sign-mag', 'Sign-Magnitude')" class="px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-400 hover:text-purple-300 transition-all">Copy</button>
             </div>
           </div>
         </div>
@@ -282,7 +296,8 @@ st.components.v1.html(
 
     </div>
 
-    <div id="toast" class="fixed bottom-6 right-6 bg-slate-900/90 text-sky-300 border border-sky-500/50 backdrop-blur-lg font-mono font-bold text-xs px-5 py-3.5 rounded-2xl shadow-2xl opacity-0 pointer-events-none transition-all duration-300 flex items-center gap-3 z-50">
+    <!-- Toast Alert -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-slate-900/95 text-sky-300 border border-sky-500/60 backdrop-blur-xl font-mono font-bold text-xs px-5 py-3.5 rounded-2xl shadow-2xl opacity-0 pointer-events-none transition-all duration-300 flex items-center gap-3 z-50 transform translate-y-4">
       <div class="w-2.5 h-2.5 rounded-full bg-sky-400 animate-ping"></div>
       <span id="toast-text">Copied!</span>
     </div>
@@ -292,6 +307,7 @@ st.components.v1.html(
   <script>
     let currentBitWidth = 8;
     let currentBase = "Decimal";
+    let shockwavePulses = [];
 
     const inputBaseSelect = document.getElementById('input-base');
     const inputValueInput = document.getElementById('input-value');
@@ -305,10 +321,10 @@ st.components.v1.html(
     };
 
     function setupEventListeners() {
-      // Changed from 'input' to 'keydown' -> triggers ONLY when Enter key is pressed!
       inputValueInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
           updateConversion();
+          triggerPulseWave();
         }
       });
       
@@ -329,38 +345,61 @@ st.components.v1.html(
         height = canvas.height = window.innerHeight;
       });
 
-      const stars = Array.from({ length: 70 }, () => ({
+      const stars = Array.from({ length: 85 }, () => ({
         x: Math.random() * width, y: Math.random() * height,
-        radius: Math.random() * 1.5 + 0.3, alpha: Math.random() * 0.8 + 0.2,
-        speed: Math.random() * 0.2 + 0.05, color: ['#38bdf8', '#a855f7', '#f43f5e'][Math.floor(Math.random() * 3)]
+        radius: Math.random() * 1.6 + 0.3, alpha: Math.random() * 0.8 + 0.2,
+        speed: Math.random() * 0.25 + 0.05, color: ['#38bdf8', '#a855f7', '#f43f5e', '#38bdf8'][Math.floor(Math.random() * 4)]
       }));
 
       function renderFrame() {
         ctx.clearRect(0, 0, width, height);
+
+        // Render Stars
         stars.forEach(star => {
           star.y -= star.speed;
           if (star.y < 0) { star.y = height; star.x = Math.random() * width; }
           ctx.beginPath(); ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-          ctx.fillStyle = star.color; ctx.globalAlpha = star.alpha; ctx.fill(); ctx.globalAlpha = 1.0;
+          ctx.fillStyle = star.color; ctx.globalAlpha = star.alpha;
+          ctx.shadowBlur = 8; ctx.shadowColor = star.color;
+          ctx.fill(); ctx.shadowBlur = 0; ctx.globalAlpha = 1.0;
         });
+
+        // Render Shockwave Rings
+        for (let i = shockwavePulses.length - 1; i >= 0; i--) {
+          const p = shockwavePulses[i];
+          p.radius += p.speed; p.alpha -= 0.018;
+          if (p.alpha <= 0) { shockwavePulses.splice(i, 1); continue; }
+          ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.strokeStyle = p.color; ctx.lineWidth = p.lineWidth;
+          ctx.globalAlpha = p.alpha; ctx.stroke(); ctx.globalAlpha = 1.0;
+        }
+
         requestAnimationFrame(renderFrame);
       }
       renderFrame();
+    }
+
+    function triggerPulseWave() {
+      shockwavePulses.push({
+        x: window.innerWidth / 2, y: window.innerHeight / 3,
+        radius: 10, speed: 7, alpha: 0.85, lineWidth: 2.5, color: '#38bdf8'
+      });
     }
 
     function setBitWidth(bits) {
       currentBitWidth = bits;
       document.querySelectorAll('.bit-width-btn').forEach(btn => {
         btn.classList.remove('bg-sky-600', 'border-sky-400', 'text-white', 'shadow-lg');
-        btn.classList.add('bg-slate-900/80', 'border-slate-800', 'text-slate-400');
+        btn.classList.add('bg-slate-900/90', 'border-slate-800', 'text-slate-400');
       });
       const activeBtn = document.getElementById(`btn-bit-${bits}`);
       if (activeBtn) {
-        activeBtn.classList.remove('bg-slate-900/80', 'border-slate-800', 'text-slate-400');
+        activeBtn.classList.remove('bg-slate-900/90', 'border-slate-800', 'text-slate-400');
         activeBtn.classList.add('bg-sky-600', 'border-sky-400', 'text-white', 'shadow-lg');
       }
       document.getElementById('bit-mode-badge').textContent = `${bits}-BIT WORD`;
       updateConversion();
+      triggerPulseWave();
     }
 
     function clearInput() { inputValueInput.value = ''; updateConversion(); }
@@ -372,6 +411,7 @@ st.components.v1.html(
       else if (type === 'ALL_ONES') { inputBaseSelect.value = 'Binary'; currentBase = 'Binary'; inputValueInput.value = "1".repeat(currentBitWidth); }
       else if (type === 'ZERO') inputValueInput.value = '0';
       updateConversion();
+      triggerPulseWave();
     }
 
     function updateConversion() {
@@ -437,7 +477,7 @@ st.components.v1.html(
       bitGrid.innerHTML = '';
       binStr.split('').forEach((bit, idx) => {
         const bitBox = document.createElement('div');
-        bitBox.className = `bit-box font-mono font-extrabold text-xs w-8 h-10 rounded-xl flex flex-col items-center justify-center border ${bit === '1' ? 'active' : 'inactive'}`;
+        bitBox.className = `bit-box font-mono font-extrabold text-xs w-9 h-11 rounded-2xl flex flex-col items-center justify-center border ${bit === '1' ? 'active' : 'inactive'}`;
         bitBox.innerHTML = `<span>${bit}</span><span class="text-[8px] opacity-60">b${binStr.length - 1 - idx}</span>`;
         bitBox.onclick = () => {
           let arr = binStr.split('');
@@ -445,6 +485,7 @@ st.components.v1.html(
           inputBaseSelect.value = 'Binary'; currentBase = 'Binary';
           inputValueInput.value = arr.join('');
           updateConversion();
+          triggerPulseWave();
         };
         bitGrid.appendChild(bitBox);
       });
@@ -459,14 +500,17 @@ st.components.v1.html(
     function showToast(msg) {
       const toast = document.getElementById('toast');
       document.getElementById('toast-text').textContent = msg;
-      toast.classList.remove('opacity-0', 'pointer-events-none');
-      toast.classList.add('opacity-100');
-      setTimeout(() => { toast.classList.remove('opacity-100'); toast.classList.add('opacity-0', 'pointer-events-none'); }, 2000);
+      toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
+      toast.classList.add('opacity-100', 'translate-y-0');
+      setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+      }, 2200);
     }
   </script>
 </body>
 </html>
 """,
-    height=850,
+    height=880,
     scrolling=True,
 )
