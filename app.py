@@ -7,7 +7,7 @@ st.set_page_config(
     layout="wide",
 )
 
-# Embed the complete Cyber Architecture HTML/JS Web App with Intro Splash & Navigation Loop
+# Embed the complete Cyber Architecture HTML/JS Web App with Blank Input & Reset Fix
 st.components.v1.html(
     """
 <!DOCTYPE html>
@@ -192,7 +192,8 @@ st.components.v1.html(
             </button>
           </div>
           <div class="relative">
-            <input type="text" id="input-value" value="12" placeholder="Type value & press Enter..." class="cyber-input w-full bg-slate-900/95 border border-slate-700 text-slate-100 font-mono text-lg font-bold rounded-2xl pl-4 pr-10 py-4 outline-none transition-all shadow-inner">
+            <!-- Blank input box matching the requested clean placeholder state -->
+            <input type="text" id="input-value" value="" placeholder="Type value & press Enter..." class="cyber-input w-full bg-slate-900/95 border border-slate-700 text-slate-100 font-mono text-lg font-bold rounded-2xl pl-4 pr-10 py-4 outline-none transition-all shadow-inner">
           </div>
           <p id="error-message" class="text-xs text-rose-400 mt-2 font-medium hidden flex items-center gap-1.5">
             <i class="fa-solid fa-triangle-exclamation"></i> Invalid input for selected number base!
@@ -520,7 +521,10 @@ st.components.v1.html(
       }
     }
 
-    function clearInput() { inputValueInput.value = ''; }
+    function clearInput() { 
+      inputValueInput.value = ''; 
+      inputValueInput.focus();
+    }
 
     function applyPreset(type) {
       inputBaseSelect.value = 'Decimal'; currentBase = 'Decimal';
