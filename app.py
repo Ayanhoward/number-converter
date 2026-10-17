@@ -1,140 +1,197 @@
 import streamlit as st
 
-# --- PAGE CONFIGURATION ---
+# Page Configuration
 st.set_page_config(
-    page_title="Computer Architecture Converter",
+    page_title="Computer Architecture Number Converter",
     page_icon="💻",
-    layout="centered"
+    layout="centered",
 )
 
-# --- CUSTOM CSS STYLING ---
-st.markdown("""
+# Professional CSS Styling with High Contrast
+st.markdown(
+    """
     <style>
-    /* Main background and font styling */
+    /* Main Background & Text Color */
     .stApp {
-        background-color: #f4f6f9;
-        font-family: 'Arial', sans-serif;
+        background-color: #0f172a;
+        color: #f8fafc;
     }
     
-    /* Header title style */
-    h1 {
-        color: #2c3e50;
-        text-align: center;
+    /* Header Styling */
+    h1, h2, h3, h4, h5, h6, p, label, span {
+        color: #f8fafc !important;
+    }
+    
+    .main-title {
+        font-size: 2.2rem;
         font-weight: 700;
-        padding-bottom: 10px;
-    }
-
-    /* Container Card Style */
-    div.block-container {
-        padding-top: 2rem;
+        color: #38bdf8 !important;
+        text-align: center;
+        margin-bottom: 0.2rem;
     }
     
-    /* Custom button style */
-    .stButton>button {
-        background-color: #2980b9;
-        color: white;
-        font-size: 16px;
-        font-weight: bold;
-        width: 100%;
-        border-radius: 8px;
-        border: none;
-        padding: 10px;
-        transition: 0.3s;
+    .subtitle {
+        font-size: 1.1rem;
+        color: #94a3b8 !important;
+        text-align: center;
+        margin-bottom: 2rem;
     }
-    .stButton>button:hover {
-        background-color: #1f618d;
-        color: #ffffff;
-    }
-
-    /* Result metric card styles */
+    
+    /* Card Container */
     .metric-card {
-        background-color: #ffffff;
-        padding: 15px;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        margin-bottom: 10px;
-        border-left: 5px solid #2980b9;
+        background-color: #1e293b;
+        border: 1px solid #334155;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 15px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     }
     
-    .twos-card {
-        background-color: #ffffff;
-        padding: 15px;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        margin-bottom: 10px;
-        border-left: 5px solid #c0392b;
+    .metric-title {
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #38bdf8 !important;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+    
+    .metric-value {
+        font-size: 1.4rem;
+        font-family: monospace;
+        color: #ffffff !important;
+        font-weight: bold;
     }
     </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
-# --- APP UI CONTENT ---
-st.title("💻 Architecture & Organization")
-st.subheader("Number System & Data Representation Converter")
-st.write("Convert values across bases and analyze computer word sizes and signed 2's complement representations.")
+# App Header
+st.markdown(
+    '<p class="main-title">💻 Architecture & Organization</p>',
+    unsafe_allow_html=True,
+)
+st.markdown(
+    '<p class="subtitle">Number System & Data Representation Converter</p>',
+    unsafe_allow_html=True,
+)
 
-st.markdown("---")
+# Input Section in a Clean Form Layout
+with st.container():
+    st.markdown("### ⚙️ Conversion Parameters")
+    col1, col2 = st.columns(2)
 
-# Layout columns for inputs
-col1, col2 = st.columns(2)
+    with col1:
+        input_base = st.selectbox(
+            "Select Input Base", ["Decimal", "Binary", "Hexadecimal", "Octal"]
+        )
 
-with col1:
-    base_type = st.selectbox(
-        "Select Input Base",
-        ["Decimal", "Binary", "Hexadecimal", "Octal"]
-    )
-    bit_str = st.selectbox(
-        "Bit Width (Word Size)",
-        ["8-bit", "16-bit", "32-bit"]
-    )
-    bits = int(bit_str.split("-")[0])
+    with col2:
+        bit_width = st.selectbox(
+            "Bit Width (Word Size)", ["8-bit", "16-bit", "32-bit"]
+        )
 
-with col2:
-    raw_input = st.text_input("Enter Value:", value="12")
+    raw_value = st.text_input("Enter Value:", value="12")
 
-st.markdown("<br>", unsafe_allow_html=True)
+# Processing and Conversion Logic
+bits = int(bit_width.split("-")[0])
+max_val = (2**bits) - 1
+signed_max = (2 ** (bits - 1)) - 1
+signed_min = -(2 ** (bits - 1))
 
-# Conversion Execution on Button Click
-if st.button("Convert Representation"):
-    if not raw_input.strip():
-        st.error("Input field cannot be empty!")
+error_flag = False
+decimal_value = 0
+
+if raw_value.strip() == "":
+    st.warning("⚠️ Please enter a value to convert.")
+    error_flag = True
+else:
+    try:
+        if input_base == "Decimal":
+            decimal_value = int(raw_value)
+        elif input_base == "Binary":
+            decimal_value = int(raw_value, 2)
+        elif input_base == "Hexadecimal":
+            decimal_value = int(raw_value, 16)
+        elif input_base == "Octal":
+            decimal_value = int(raw_value, 8)
+    except ValueError:
+        st.error(
+            f"❌ Invalid characters entered for **{input_base}** base format."
+        )
+        error_flag = True
+
+if not error_flag:
+    # Range check for unsigned/standard view
+    binary_str = bin(decimal_value & max_val)[2:].zfill(bits)
+    hex_str = hex(decimal_value & max_val)[2:].upper()
+    oct_str = oct(decimal_value & max_val)[2:]
+
+    # 2's Complement representation for signed values
+    if decimal_value < 0:
+        twos_comp = bin((decimal_value + (1 << bits)) & max_val)[2:].zfill(bits)
     else:
-        try:
-            # Parse input based on selected base
-            if base_type == "Decimal":
-                dec_val = int(raw_input, 10)
-            elif base_type == "Binary":
-                dec_val = int(raw_input, 2)
-            elif base_type == "Hexadecimal":
-                dec_val = int(raw_input, 16)
-            elif base_type == "Octal":
-                dec_val = int(raw_input, 8)
+        twos_comp = bin(decimal_value & max_val)[2:].zfill(bits)
 
-            # Range checks
-            max_val = (2 ** (bits - 1)) - 1
-            min_val = -(2 ** (bits - 1))
-            
-            bin_val = bin(dec_val & 0xFFFFFFFF)[2:]
-            hex_val = hex(dec_val).upper()
-            oct_val = oct(dec_val)
+    st.markdown("---")
+    st.markdown("### 📊 Converted Outputs")
 
-            # 2's Complement Logic
-            if dec_val < min_val or dec_val > (2**bits - 1):
-                twos_comp_str = f"Out of range for {bits}-bit integer!"
-            else:
-                if dec_val < 0:
-                    twos_val = (1 << bits) + dec_val
-                else:
-                    twos_val = dec_val
-                twos_comp_str = f"{twos_val:0{bits}b}"
+    # Display Results in Responsive Cards
+    r_col1, r_col2 = st.columns(2)
 
-            # Display Results using stylized HTML cards
-            st.markdown("### 📊 Converted Outputs")
-            
-            st.markdown(f'<div class="metric-card"><b>Decimal (Base 10):</b> {dec_val}</div>', unsafe_allow_html=True)
-            st.markdown(f'<div class="metric-card"><b>Binary (Base 2):</b> {bin_val}</div>', unsafe_allow_html=True)
-            st.markdown(f'<div class="metric-card"><b>Hexadecimal (Base 16):</b> {hex_val}</div>', unsafe_allow_html=True)
-            st.markdown(f'<div class="metric-card"><b>Octal (Base 8):</b> {oct_val}</div>', unsafe_allow_html=True)
-            st.markdown(f'<div class="twos-card"><b style="color: #c0392b;">2\'s Complement ({bits}-bit signed):</b> {twos_comp_str}</div>', unsafe_allow_html=True)
+    with r_col1:
+        st.markdown(
+            f"""
+        <div class="metric-card">
+            <div class="metric-title">Decimal (Base 10)</div>
+            <div class="metric-value">{decimal_value}</div>
+        </div>
+        """,
+            unsafe_allow_html=True,
+        )
 
-        except ValueError:
-            st.error(f"The value '{raw_input}' is invalid for base {base_type}.")
+        st.markdown(
+            f"""
+        <div class="metric-card">
+            <div class="metric-title">Hexadecimal (Base 16)</div>
+            <div class="metric-value">0x{hex_str}</div>
+        </div>
+        """,
+            unsafe_allow_html=True,
+        )
+
+    with r_col2:
+        st.markdown(
+            f"""
+        <div class="metric-card">
+            <div class="metric-title">Binary (Base 2 - {bit_width})</div>
+            <div class="metric-value">{binary_str}</div>
+        </div>
+        """,
+            unsafe_allow_html=True,
+        )
+
+        st.markdown(
+            f"""
+        <div class="metric-card">
+            <div class="metric-title">Octal (Base 8)</div>
+            <div class="metric-value">0o{oct_str}</div>
+        </div>
+        """,
+            unsafe_allow_html=True,
+        )
+
+    # Signed 2's Complement Card Section
+    st.markdown(
+        f"""
+    <div class="metric-card">
+        <div class="metric-title">Signed 2's Complement Representation ({bit_width})</div>
+        <div class="metric-value">{twos_comp}</div>
+        <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 8px; margin-bottom: 0;">
+            Valid Range for {bit_width}: {signed_min} to {signed_max}
+        </p>
+    </div>
+    """,
+        unsafe_allow_html=True,
+    )
